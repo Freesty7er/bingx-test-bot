@@ -1,0 +1,55 @@
+@startuml
+!theme plain
+title Trading Bot Architecture
+
+actor User
+
+package "Data Collection" {
+  [BingX API Client] as BAPI
+  [Historical Data Loader] as HDL
+  [Real-time Market Data] as RMD
+}
+
+package "Technical Analysis" {
+  [Indicator Calculator] as IC
+  [Signal Generator] as SG
+  [Trading Strategy] as TS
+}
+
+package "Risk Management" {
+  [Position Sizing] as PS
+  [Stop Loss Calculator] as SLC
+  [Take Profit Calculator] as TPC
+}
+
+package "Order Management" {
+  [Order Executor] as OE
+  [Trade Logger] as TL
+}
+
+database "Database" {
+  [Trade History]
+  [Performance Metrics]
+}
+
+User --> BAPI: Request Data
+BAPI --> HDL: Load Historical Data
+BAPI --> RMD: Stream Market Data
+
+HDL --> IC: Calculate Indicators
+RMD --> IC: Update Indicators
+IC --> SG: Generate Signals
+SG --> TS: Evaluate Strategy
+
+TS --> PS: Calculate Position Size
+TS --> SLC: Define Stop Loss
+TS --> TPC: Define Take Profit
+
+PS --> OE: Execute Order
+SLC --> OE: Risk Parameters
+TPC --> OE: Profit Target
+
+OE --> TL: Log Trades
+OE --> Database: Store Results
+
+@enduml

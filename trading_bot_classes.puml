@@ -1,0 +1,92 @@
+@startuml
+!theme plain
+title Trading Bot Class Diagram
+
+abstract class BaseExchangeAPI {
+  - api_key: str
+  - secret_key: str
+  + connect()
+  + get_balance()
+  + get_current_price()
+  + create_order()
+  + cancel_order()
+}
+
+class BingXAPI {
+  + get_historical_data()
+  + get_trading_pairs()
+  + get_account_info()
+}
+
+class IndicatorCalculator {
+  - historical_data: DataFrame
+  + calculate_sma(period: int)
+  + calculate_ema(period: int)
+  + calculate_rsi(period: int)
+  + calculate_macd()
+  + calculate_bollinger_bands()
+}
+
+class RiskManager {
+  - initial_balance: float
+  - max_risk_per_trade: float
+  + calculate_position_size(entry_price: float)
+  + calculate_stop_loss(entry_price: float)
+  + calculate_take_profit(entry_price: float)
+}
+
+class TradingStrategy {
+  - indicators: IndicatorCalculator
+  - risk_manager: RiskManager
+  + generate_entry_signal()
+  + generate_exit_signal()
+  + evaluate_trade_conditions()
+}
+
+class OrderExecutor {
+  - exchange_api: BaseExchangeAPI
+  - trading_strategy: TradingStrategy
+  + open_position(signal: str)
+  + close_position()
+  + manage_active_trades()
+}
+
+class TradeLogger {
+  - log_file: str
+  + log_trade_entry(trade_details: dict)
+  + log_trade_exit(trade_details: dict)
+  + generate_performance_report()
+}
+
+class TradingBot {
+  - exchange_api: BaseExchangeAPI
+  - indicator_calculator: IndicatorCalculator
+  - trading_strategy: TradingStrategy
+  - order_executor: OrderExecutor
+  - trade_logger: TradeLogger
+  + initialize()
+  + run()
+  + stop()
+}
+
+class DataCollector {
+  + fetch_historical_data()
+  + stream_real_time_data()
+  + update_market_data()
+}
+
+' Связи между классами
+BaseExchangeAPI <|-- BingXAPI
+TradingBot "1" *-- "1" BingXAPI
+TradingBot "1" *-- "1" IndicatorCalculator
+TradingBot "1" *-- "1" TradingStrategy
+TradingBot "1" *-- "1" OrderExecutor
+TradingBot "1" *-- "1" TradeLogger
+
+TradingStrategy "1" *-- "1" IndicatorCalculator
+TradingStrategy "1" *-- "1" RiskManager
+
+OrderExecutor --> TradingStrategy
+OrderExecutor --> BaseExchangeAPI
+
+@enduml

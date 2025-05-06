@@ -1,0 +1,124 @@
+@startuml
+!theme plain
+title Trading Bot Subsystems Architecture
+
+skinparam packageStyle rectangle
+left to right direction
+
+package "Exchange Interaction\nSubsystem" as ExchangeSubsystem {
+    abstract class BaseExchangeAPI {
+        - api_key: str
+        - secret_key: str
+        + connect()
+        + get_balance()
+        + get_current_price()
+    }
+    class BingXAPI {
+        + get_historical_data()
+        + create_order()
+        + cancel_order()
+    }
+}
+
+package "Data Management\nSubsystem" as DataSubsystem {
+    class DataCollector {
+        + fetch_historical_data()
+        + stream_real_time_data()
+        + normalize_data()
+    }
+    class DataStorage {
+        + save_market_data()
+        + load_historical_data()
+        + update_database()
+    }
+}
+
+package "Market Analysis\nSubsystem" as AnalysisSubsystem {
+    class IndicatorCalculator {
+        + calculate_sma()
+        + calculate_ema()
+        + calculate_rsi()
+        + calculate_macd()
+    }
+    class PatternRecognition {
+        + detect_chart_patterns()
+        + identify_trend()
+        + analyze_market_structure()
+    }
+}
+
+package "Trading Strategy\nSubsystem" as StrategySubsystem {
+    class TradingStrategy {
+        + generate_entry_signals()
+        + generate_exit_signals()
+        + evaluate_trade_conditions()
+    }
+    class StrategyOptimizer {
+        + backtest_strategy()
+        + optimize_parameters()
+        + calculate_performance_metrics()
+    }
+}
+
+package "Risk Management\nSubsystem" as RiskSubsystem {
+    class RiskManager {
+        + calculate_position_size()
+        + set_stop_loss()
+        + set_take_profit()
+        + manage_portfolio_risk()
+    }
+    class MoneyManagement {
+        + calculate_leverage()
+        + determine_max_drawdown()
+        + balance_portfolio()
+    }
+}
+
+package "Order Management\nSubsystem" as OrderSubsystem {
+    class OrderExecutor {
+        + create_market_order()
+        + create_limit_order()
+        + manage_open_positions()
+        + handle_order_errors()
+    }
+    class TradeTracker {
+        + log_trade_details()
+        + update_trade_history()
+        + generate_trade_report()
+    }
+}
+
+package "Notification & Monitoring\nSubsystem" as NotificationSubsystem {
+    class AlertSystem {
+        + send_trade_notifications()
+        + monitor_system_health()
+        + trigger_emergency_actions()
+    }
+    class PerformanceMonitor {
+        + track_bot_performance()
+        + generate_performance_report()
+        + visualize_trading_metrics()
+    }
+}
+
+class TradingBot {
+    - exchange_api: BaseExchangeAPI
+    - data_collector: DataCollector
+    - indicator_calculator: IndicatorCalculator
+    - trading_strategy: TradingStrategy
+    - risk_manager: RiskManager
+    - order_executor: OrderExecutor
+    + initialize()
+    + run()
+    + stop()
+}
+
+' Связи между подсистемами
+TradingBot "1" *-- "1" BaseExchangeAPI
+TradingBot "1" *-- "1" DataCollector
+TradingBot "1" *-- "1" IndicatorCalculator
+TradingBot "1" *-- "1" TradingStrategy
+TradingBot "1" *-- "1" RiskManager
+TradingBot "1" *-- "1" OrderExecutor
+
+@enduml
